@@ -1,5 +1,9 @@
 # starter-team02: dsre-v2
 
+Codecov Badge:
+
+[![codecov](https://codecov.io/gh/ucsb-cs156-w22/team02-w22-5pm-1/branch/main/graph/badge.svg?token=ByOBordKpc)](https://codecov.io/gh/ucsb-cs156-w22/team02-w22-5pm-1)
+
 Storybook is here:
 * Production: <https://ucsb-cs156-w22.github.io/starter-team02-docs/>
 * QA:  <https://ucsb-cs156-w22.github.io/starter-team02-docs-qa/>
