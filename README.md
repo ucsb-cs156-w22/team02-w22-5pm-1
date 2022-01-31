@@ -1,8 +1,8 @@
 # starter-team02: dsre-v2
 
 Storybook is here:
-* Production: <https://ucsb-cs156-w22.github.io/starter-team02-docs/>
-* QA:  <https://ucsb-cs156-w22.github.io/starter-team02-docs-qa/>
+* Production: <https://w22-5pm-1-team02.herokuapp.com>
+* QA:  <https://w22-5pm-1-team02-qa.herokuapp.com>
 
 The GitHub actions script to deploy the Storybook to QA requires some configuration; see [docs/github-actions.md](docs/github-actions.md) for details.
 
