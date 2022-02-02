@@ -4,6 +4,10 @@ Codecov Badge:
 
 [![codecov](https://codecov.io/gh/ucsb-cs156-w22/team02-w22-5pm-1/branch/main/graph/badge.svg?token=ByOBordKpc)](https://codecov.io/gh/ucsb-cs156-w22/team02-w22-5pm-1)
 
+Heroku links:
+* Production: <https://w22-5pm-1-team02.herokuapp.com>
+* QA:  <https://w22-5pm-1-team02-qa.herokuapp.com>
+
 Storybook is here:
 * Production: <https://ucsb-cs156-w22.github.io/team02-w22-5pm-1-docs/>
 * QA:  <https://ucsb-cs156-w22.github.io/team02-w22-5pm-1-docs-qa/>
