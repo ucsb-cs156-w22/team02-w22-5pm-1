@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import  edu.ucsb.cs156.team02.entities.UCSBSubject;
 
 @Repository
-public interface UCSBSubjectRepository extends CrudRepository<UCSBSUbject, Long>{
+public interface UCSBSubjectRepository extends CrudRepository<UCSBSubject, Long>{
     Iterable<UCSBSubject> findBySubject(String subject);
 }
