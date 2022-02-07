@@ -50,10 +50,37 @@ public class UCSBRequirementController extends ApiController{
     ObjectMapper mapper;
 
     @ApiOperation(value = "List all UCSBRequirements")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/all")
     public Iterable<UCSBRequirement> allUcsbRequirements() {
         loggingService.logMethod();
         Iterable<UCSBRequirement> requirements = ucsbRequirementRepository.findAll();
         return requirements;
+    }
+
+    @ApiOperation(value = "Create a new UCSBRequirement")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PostMapping("/post")
+    public UCSBRequirement postUcsbRequirement(
+            @ApiParam("requirement_code") @RequestParam String requirementCode,
+            @ApiParam("requirement_translation") @RequestParam String requirementTranslation,
+            @ApiParam("college_code") @RequestParam String collegeCode,
+            @ApiParam("obj_code") @RequestParam String objCode,
+            @ApiParam("course_count") @RequestParam int courseCount,
+            @ApiParam("units") @RequestParam int units,
+            @ApiParam("inactive") @RequestParam boolean inactive) {
+        loggingService.logMethod();
+
+        UCSBRequirement ucsbRequirement = new UCSBRequirement();
+        ucsbRequirement.setRequirementCode(requirementCode);
+        ucsbRequirement.setRequirementTranslation(requirementTranslation);
+        ucsbRequirement.setCollegeCode(collegeCode);
+        ucsbRequirement.setObjCode(objCode);
+        ucsbRequirement.setCourseCount(courseCount);
+        ucsbRequirement.setUnits(units);
+        ucsbRequirement.setInactive(inactive);
+        
+        UCSBRequirement savedUcsbRequirement = ucsbRequirementRepository.save(ucsbRequirement);
+        return savedUcsbRequirement;
     }
 }
