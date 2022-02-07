@@ -73,13 +73,16 @@ public class UCSBSubjectControllerTests extends ControllerTestCase {
                 .subjectTranslation("mikeoxlong")
                 .deptCode("69")
                 .collegeCode("420")
+                .relatedDeptCode("bruh")
                 .inactive(false)
                 .build();
 
         when(subjectRepository.save(eq(expectedSubject))).thenReturn(expectedSubject);
-
-        MvcResult response = mockMvc.perform(get("/api/UCSBSubjects/post?subjectCode=69420&subjectTranslation=mikeoxlong&deptCode=69&collegeCode=420&inactive=false"))
-                .andExpect(status().isOk()).andReturn();
+        
+        MvcResult response = mockMvc.perform(
+            post("/api/UCSBSubjects/post?relatedDeptCode=bruh&subjectCode=69420&subjectTranslation=mikeoxlong&deptCode=69&collegeCode=420&inactive=false")
+            .with(csrf()))        
+        .andExpect(status().isOk()).andReturn();
 
         verify(subjectRepository, times(1)).save(expectedSubject);
         String expectedJson = mapper.writeValueAsString(expectedSubject);
@@ -97,13 +100,14 @@ public class UCSBSubjectControllerTests extends ControllerTestCase {
                 .subjectTranslation("mikeoxlong")
                 .deptCode("69")
                 .collegeCode("420")
+                .relatedDeptCode("bruh")
                 .inactive(false)
                 .build();
 
         when(subjectRepository.save(eq(expectedSubject))).thenReturn(expectedSubject);
         
         MvcResult response = mockMvc.perform(
-            post("/api/UCSBSubjects/post?subjectCode=69420&subjectTranslation=mikeoxlong&deptCode=69&collegeCode=420&inactive=false")
+            post("/api/UCSBSubjects/post?relatedDeptCode=bruh&subjectCode=69420&subjectTranslation=mikeoxlong&deptCode=69&collegeCode=420&inactive=false")
             .with(csrf()))        
         .andExpect(status().isOk()).andReturn();
 
@@ -122,13 +126,14 @@ public class UCSBSubjectControllerTests extends ControllerTestCase {
                 .subjectTranslation("mikeoxlong")
                 .deptCode("69")
                 .collegeCode("420")
+                .relatedDeptCode("bruh")
                 .inactive(false)
                 .build();
 
         when(subjectRepository.save(eq(expectedSubject))).thenReturn(expectedSubject);
         
         MvcResult response = mockMvc.perform(
-            post("/api/UCSBSubjects/post?subjectCode=69420&subjectTranslation=mikeoxlong&deptCode=69&collegeCode=420&inactive=false")
+            post("/api/UCSBSubjects/post?relatedDeptCode=bruh&subjectCode=69420&subjectTranslation=mikeoxlong&deptCode=69&collegeCode=420&inactive=false")
             .with(csrf()))        
         .andExpect(status().isOk()).andReturn();
 
@@ -137,6 +142,4 @@ public class UCSBSubjectControllerTests extends ControllerTestCase {
         String responseString = response.getResponse().getContentAsString();
         assertEquals(expectedJson, responseString);
     }
-
-
 }
