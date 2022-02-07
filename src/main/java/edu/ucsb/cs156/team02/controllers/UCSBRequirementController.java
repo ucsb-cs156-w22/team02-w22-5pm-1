@@ -50,7 +50,7 @@ public class UCSBRequirementController extends ApiController{
     ObjectMapper mapper;
 
     @ApiOperation(value = "List all UCSBRequirements")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER') || hasRole('ROLE_ADMIN')")
     @GetMapping("/all")
     public Iterable<UCSBRequirement> allUcsbRequirements() {
         loggingService.logMethod();
@@ -59,7 +59,7 @@ public class UCSBRequirementController extends ApiController{
     }
 
     @ApiOperation(value = "Create a new UCSBRequirement")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER') || hasRole('ROLE_ADMIN')")
     @PostMapping("/post")
     public UCSBRequirement postUcsbRequirement(
             @ApiParam("requirement_code") @RequestParam String requirementCode,
