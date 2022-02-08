@@ -48,6 +48,30 @@ public class UCSBRequirementController extends ApiController{
         return requirements;
     }
 
+    @ApiOperation(value = "Get a single UCSBRequirement by id.")
+    @PreAuthorize("hasRole('ROLE_USER') || hasRole('ROLE_ADMIN')")
+    @GetMapping("")
+    public ResponseEntity<String> getUcsbRequirementById(
+            @ApiParam("id") @RequestParam Long id) throws JsonProcessingException {
+
+        loggingService.logMethod();
+
+        Optional<UCSBRequirement> optionalRequirement = ucsbRequirementRepository.findById(id);
+
+        if (optionalRequirement.isEmpty()) {
+            ResponseEntity<String> error;
+            error = ResponseEntity
+                    .badRequest()
+                    .body(String.format("id %d not found", id));
+            return error;
+        }
+
+        UCSBRequirement requirement = optionalRequirement.get();
+
+        String body = mapper.writeValueAsString(requirement);
+        return ResponseEntity.ok().body(body);
+    }
+
     @ApiOperation(value = "Create a new UCSBRequirement.")
     @PreAuthorize("hasRole('ROLE_USER') || hasRole('ROLE_ADMIN')")
     @PostMapping("/post")
@@ -59,7 +83,7 @@ public class UCSBRequirementController extends ApiController{
             @ApiParam("course_count") @RequestParam int courseCount,
             @ApiParam("units") @RequestParam int units,
             @ApiParam("inactive") @RequestParam boolean inactive) {
-                
+
         loggingService.logMethod();
 
         UCSBRequirement ucsbRequirement = new UCSBRequirement();
@@ -74,4 +98,6 @@ public class UCSBRequirementController extends ApiController{
         UCSBRequirement savedUcsbRequirement = ucsbRequirementRepository.save(ucsbRequirement);
         return savedUcsbRequirement;
     }
+
+
 }

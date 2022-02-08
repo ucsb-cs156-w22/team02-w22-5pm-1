@@ -26,6 +26,8 @@ import java.util.Optional;
 
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 
+import com.fasterxml.jackson.databind.introspect.TypeResolutionContext.Empty;
+
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
@@ -136,6 +138,63 @@ public class UCSBRequirementControllerTests extends ControllerTestCase{
         String expectedJson = mapper.writeValueAsString(List.of(expectedUcsbRequirement));
         String responseString = response.getResponse().getContentAsString();
         assertEquals(expectedJson, responseString);
+    }
+
+    @WithMockUser(roles = { "ADMIN" })
+    @Test
+    public void api_get_ucsb_requirements_with_id() throws Exception {
+
+        UCSBRequirement expectedUcsbRequirement = UCSBRequirement.builder()
+            .requirementCode(REQ_CODE)
+            .requirementTranslation(REQ_TRANSLATION)
+            .collegeCode(COLLEGE_CODE)
+            .objCode(OBJ_CODE)
+            .courseCount(COURSE_COUNT)
+            .units(UNITS)
+            .inactive(INACTIVE)
+            .id(ID)
+            .build();
+
+        when(ucsbRequirementRepository.findById(eq(ID))).thenReturn(Optional.of(expectedUcsbRequirement));
+
+        String url = String.format("/api/UCSBRequirements?id=%s", ID);
+        MvcResult response = mockMvc.perform(get(url))
+                .andExpect(status().is(200))
+                .andReturn();
+
+        verify(ucsbRequirementRepository, times(1)).findById(eq(ID));
+        String expectedJson = mapper.writeValueAsString(expectedUcsbRequirement);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedJson, responseString);
+    }
+
+    @WithMockUser(roles = { "ADMIN" })
+    @Test
+    public void api_get_ucsb_requirements_with_nonexistent_id() throws Exception {
+
+        Long nonexistent_id = 100L;
+
+        UCSBRequirement expectedUcsbRequirement = UCSBRequirement.builder()
+            .requirementCode(REQ_CODE)
+            .requirementTranslation(REQ_TRANSLATION)
+            .collegeCode(COLLEGE_CODE)
+            .objCode(OBJ_CODE)
+            .courseCount(COURSE_COUNT)
+            .units(UNITS)
+            .inactive(INACTIVE)
+            .id(ID)
+            .build();
+
+        when(ucsbRequirementRepository.findById(eq(nonexistent_id))).thenReturn(Optional.empty());
+
+        String url = String.format("/api/UCSBRequirements?id=%s", nonexistent_id);
+        MvcResult response = mockMvc.perform(get(url))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        verify(ucsbRequirementRepository, times(1)).findById(eq(nonexistent_id));
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals("id 100 not found", responseString);
     }
 
 
