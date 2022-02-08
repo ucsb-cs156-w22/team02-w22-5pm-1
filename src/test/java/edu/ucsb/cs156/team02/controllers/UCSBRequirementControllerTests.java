@@ -21,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
@@ -47,16 +48,14 @@ public class UCSBRequirementControllerTests extends ControllerTestCase{
     private static final String OBJ_CODE= "objCode";
     private static final Integer COURSE_COUNT= 4;
     private static final Integer UNITS = 8;
-    private static final Boolean INACTIVE = false;
+    private static final Boolean INACTIVE = true;
     private static final Long ID = 0L;
 
     @WithMockUser(roles = { "USER" })
     @Test
     public void api_ucsbrequirements_post__user_logged_in() throws Exception {
+        
         // arrange
-
-        // User u = currentUserService.getCurrentUser().getUser();
-
         UCSBRequirement expectedUcsbRequirement = UCSBRequirement.builder()
             .requirementCode(REQ_CODE)
             .requirementTranslation(REQ_TRANSLATION)
@@ -87,9 +86,57 @@ public class UCSBRequirementControllerTests extends ControllerTestCase{
 
     @WithMockUser(roles = { "USER" })
     @Test
-    public void api_all_ucsb_requirements_post_to_get() throws Exception {
+    public void api_all_ucsb_requirements_get_as_user() throws Exception {
 
-        mockMvc.perform(get("/api/UCSBRequirements/all"))
-                .andExpect(status().is(200));
+        UCSBRequirement expectedUcsbRequirement = UCSBRequirement.builder()
+            .requirementCode(REQ_CODE)
+            .requirementTranslation(REQ_TRANSLATION)
+            .collegeCode(COLLEGE_CODE)
+            .objCode(OBJ_CODE)
+            .courseCount(COURSE_COUNT)
+            .units(UNITS)
+            .inactive(INACTIVE)
+            .id(ID)
+            .build();
+
+        when(ucsbRequirementRepository.findAll()).thenReturn(List.of(expectedUcsbRequirement));
+
+        MvcResult response = mockMvc.perform(get("/api/UCSBRequirements/all"))
+                .andExpect(status().is(200))
+                .andReturn();
+
+        verify(ucsbRequirementRepository, times(1)).findAll();
+        String expectedJson = mapper.writeValueAsString(List.of(expectedUcsbRequirement));
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedJson, responseString);
     }
+
+    @WithMockUser(roles = { "ADMIN" })
+    @Test
+    public void api_all_ucsb_requirements_get_as_admin() throws Exception {
+
+         UCSBRequirement expectedUcsbRequirement = UCSBRequirement.builder()
+            .requirementCode(REQ_CODE)
+            .requirementTranslation(REQ_TRANSLATION)
+            .collegeCode(COLLEGE_CODE)
+            .objCode(OBJ_CODE)
+            .courseCount(COURSE_COUNT)
+            .units(UNITS)
+            .inactive(INACTIVE)
+            .id(ID)
+            .build();
+
+        when(ucsbRequirementRepository.findAll()).thenReturn(List.of(expectedUcsbRequirement));
+
+        MvcResult response = mockMvc.perform(get("/api/UCSBRequirements/all"))
+                .andExpect(status().is(200))
+                .andReturn();
+
+        verify(ucsbRequirementRepository, times(1)).findAll();
+        String expectedJson = mapper.writeValueAsString(List.of(expectedUcsbRequirement));
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedJson, responseString);
+    }
+
+
 }

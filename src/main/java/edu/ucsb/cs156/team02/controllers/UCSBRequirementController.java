@@ -33,23 +33,13 @@ import java.util.Optional;
 @Slf4j
 public class UCSBRequirementController extends ApiController{
     
-    public class UCSBRequirementOrError {
-        Long id;
-        UCSBRequirement ucsbRequirement;
-        ResponseEntity<String> error;
-
-        public UCSBRequirementOrError(Long id) {
-            this.id = id;
-        }
-    }
-
     @Autowired
     UCSBRequirementRepository ucsbRequirementRepository;
 
     @Autowired
     ObjectMapper mapper;
 
-    @ApiOperation(value = "List all UCSBRequirements")
+    @ApiOperation(value = "List all UCSBRequirements.")
     @PreAuthorize("hasRole('ROLE_USER') || hasRole('ROLE_ADMIN')")
     @GetMapping("/all")
     public Iterable<UCSBRequirement> allUcsbRequirements() {
@@ -58,7 +48,7 @@ public class UCSBRequirementController extends ApiController{
         return requirements;
     }
 
-    @ApiOperation(value = "Create a new UCSBRequirement")
+    @ApiOperation(value = "Create a new UCSBRequirement.")
     @PreAuthorize("hasRole('ROLE_USER') || hasRole('ROLE_ADMIN')")
     @PostMapping("/post")
     public UCSBRequirement postUcsbRequirement(
@@ -69,6 +59,7 @@ public class UCSBRequirementController extends ApiController{
             @ApiParam("course_count") @RequestParam int courseCount,
             @ApiParam("units") @RequestParam int units,
             @ApiParam("inactive") @RequestParam boolean inactive) {
+                
         loggingService.logMethod();
 
         UCSBRequirement ucsbRequirement = new UCSBRequirement();
