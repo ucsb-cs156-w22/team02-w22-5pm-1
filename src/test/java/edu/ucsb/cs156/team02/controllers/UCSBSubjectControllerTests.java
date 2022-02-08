@@ -142,4 +142,80 @@ public class UCSBSubjectControllerTests extends ControllerTestCase {
         String responseString = response.getResponse().getContentAsString();
         assertEquals(expectedJson, responseString);
     }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void ucsb_subject_get_subject_with_id_user() throws Exception {
+        UCSBSubject expectedSubject = UCSBSubject.builder()
+                .subjectCode("69420")
+                .subjectTranslation("mikeoxlong")
+                .deptCode("69")
+                .collegeCode("420")
+                .relatedDeptCode("bruh")
+                .inactive(false)
+                .id(Long.valueOf(420))
+                .build();
+
+        when(subjectRepository.findById(eq(Long.valueOf(420)))).thenReturn(Optional.of(expectedSubject));
+        
+        MvcResult response = mockMvc.perform(
+            get("/api/UCSBSubjects/?id=420")  )     
+        .andExpect(status().isOk()).andReturn();
+
+        verify(subjectRepository, times(1)).findById(eq(Long.valueOf(420)));
+        String expectedJson = mapper.writeValueAsString(expectedSubject);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedJson, responseString);
+    }
+
+
+    @WithMockUser(roles = { "ADMIN" })
+    @Test
+    public void ucsb_subject_get_subject_with_id_admin() throws Exception {
+        UCSBSubject expectedSubject = UCSBSubject.builder()
+                .subjectCode("69420")
+                .subjectTranslation("mikeoxlong")
+                .deptCode("69")
+                .collegeCode("420")
+                .relatedDeptCode("bruh")
+                .inactive(false)
+                .id(Long.valueOf(420))
+                .build();
+
+        when(subjectRepository.findById(eq(Long.valueOf(420)))).thenReturn(Optional.of(expectedSubject));
+        
+        MvcResult response = mockMvc.perform(
+            get("/api/UCSBSubjects/?id=420"))        
+        .andExpect(status().isOk()).andReturn();
+
+        verify(subjectRepository, times(1)).findById(eq(Long.valueOf(420)));
+        String expectedJson = mapper.writeValueAsString(expectedSubject);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedJson, responseString);
+    }
+
+
+    @Test
+    public void ucsb_subject_get_subject_with_id_not_logged_in() throws Exception {
+        UCSBSubject expectedSubject = UCSBSubject.builder()
+                .subjectCode("69420")
+                .subjectTranslation("mikeoxlong")
+                .deptCode("69")
+                .collegeCode("420")
+                .relatedDeptCode("bruh")
+                .inactive(false)
+                .id(Long.valueOf(420))
+                .build();
+
+        when(subjectRepository.findById(eq(Long.valueOf(420)))).thenReturn(Optional.of(expectedSubject));
+        
+        MvcResult response = mockMvc.perform(
+            get("/api/UCSBSubjects/?id=420"))        
+        .andExpect(status().isOk()).andReturn();
+
+        verify(subjectRepository, times(1)).findById(eq(Long.valueOf(420)));
+        String expectedJson = mapper.writeValueAsString(expectedSubject);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedJson, responseString);
+    }
 }
