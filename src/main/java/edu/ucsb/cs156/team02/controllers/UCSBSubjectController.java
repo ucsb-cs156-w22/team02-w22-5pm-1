@@ -38,6 +38,7 @@ public class UCSBSubjectController extends ApiController {
     ObjectMapper mapper;
 
     @ApiOperation(value = "List all UCSB Subjects")
+    @PreAuthorize("hasRole('ROLE_USER') || hasRole('ROLE_ADMIN')")
     @GetMapping("/all")
     public Iterable<UCSBSubject> allUsersTodos() {
         loggingService.logMethod();
@@ -47,6 +48,7 @@ public class UCSBSubjectController extends ApiController {
 
 
     @ApiOperation(value = "Create a new UCSB Subjects entry in the database")
+    @PreAuthorize("hasRole('ROLE_USER') || hasRole('ROLE_ADMIN')")
     @PostMapping("/post")
     public UCSBSubject postSubject(
             @ApiParam("subjectCode") @RequestParam String subjectCode,
@@ -69,6 +71,7 @@ public class UCSBSubjectController extends ApiController {
     }
 
     @ApiOperation(value = "Get a single UCSB Subject by ID if it is in the databse.")
+    @PreAuthorize("hasRole('ROLE_USER') || hasRole('ROLE_ADMIN')")
     @GetMapping("")
     public ResponseEntity<String> getSubjectById(
             @ApiParam("id") @RequestParam Long id) throws JsonProcessingException {
