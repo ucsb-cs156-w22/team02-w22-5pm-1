@@ -68,7 +68,7 @@ public class CollegiateSubredditController extends ApiController {
         }
     }
 
-    @ApiOperation(value = "Update a subreddit")
+    @ApiOperation(value = "Update a subreddit by id")
     @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping("")
     public ResponseEntity<String> putCollegiateSubredditById(

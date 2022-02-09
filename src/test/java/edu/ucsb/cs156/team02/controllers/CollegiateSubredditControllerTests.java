@@ -113,4 +113,68 @@ public class CollegiateSubredditControllerTests extends ControllerTestCase {
         assertEquals(expectedJson, responseString);
 
     }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void putSubreddit__logged_out__returns_403() throws Exception{
+        CollegiateSubreddit expectedSubreddit = CollegiateSubreddit.builder()
+            .name("TestName")
+            .location("TestLoc")
+            .subreddit("TestSub")
+            .id(0L)
+            .build();
+
+        String value = mapper.writeValueAsString(expectedSubreddit);
+
+        MvcResult response = mockMvc.perform(
+            put("/api/collegiateSubreddits/put?id=0")
+                .with(csrf()))
+                .andExpect(status().is(403)).andReturn();
+    }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void putSubreddit() throws Exception {
+        CollegiateSubreddit oldPost = CollegiateSubreddit.builder()
+            .name("TestName")
+            .location("TestLoc")
+            .subreddit("TestSub")
+            .id(0L)
+            .build();
+
+        CollegiateSubreddit newPost = CollegiateSubreddit.builder()
+            .name("TestName")
+            .location("TestLoc")
+            .subreddit("TestSub")
+            .id(0L)
+            .build();
+        
+        CollegiateSubreddit correctPost = CollegiateSubreddit.builder()
+            .name("TestName")
+            .location("TestLoc")
+            .subreddit("TestSub")
+            .id(0L)
+            .build();
+
+        String requestBody = mapper.writeValueAsString(newPost);
+        String expectedReturn = mapper.writeValueAsString(correctPost);
+
+        when(collegiateSubredditRepository.findById(eq(0L))).thenReturn(Optional.of(oldPost));
+
+        MvcResult response = mockMvc.perform(
+            put("/api/collegiateSubreddit/put?id=0")
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .content(requestBody)
+                .with(csrf()))
+            .andExpect(status().isOk()).andReturn();
+        
+        // assert
+        verify(collegiateSubredditRepository, times(1)).findById(eq(0L));
+        verify(collegiateSubredditRepository, times(1)).save(correctPost);
+
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedReturn, responseString);
+
+    }
 }
