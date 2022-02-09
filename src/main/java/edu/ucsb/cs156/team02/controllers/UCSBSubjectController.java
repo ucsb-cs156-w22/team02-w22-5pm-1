@@ -92,4 +92,25 @@ public class UCSBSubjectController extends ApiController {
         String body = mapper.writeValueAsString(subject);
         return ResponseEntity.ok().body(body);
     }
+
+    @ApiOperation(value = "Update a single todo (if it belongs to current user)")
+    @PreAuthorize("hasRole('ROLE_USER') || hasRole('ROLE_ADMIN')")
+    @PutMapping("")
+    public ResponseEntity<String> putTodoById(
+            @ApiParam("id") @RequestParam Long id,
+            @RequestBody @Valid UCSBSubject incomingSubject) throws JsonProcessingException {
+        loggingService.logMethod();
+        Optional<UCSBSubject> optionalSubject = subjectRepository.findById(id);
+
+        if (optionalSubject.isEmpty()) {
+            return ResponseEntity
+            .badRequest()
+            .body(String.format("Subject with id %d not found", id)); 
+        }
+        else{
+            subjectRepository.save(incomingSubject);    
+            String body = mapper.writeValueAsString(incomingSubject);
+            return ResponseEntity.ok().body(body);
+        }
+    }
 }
