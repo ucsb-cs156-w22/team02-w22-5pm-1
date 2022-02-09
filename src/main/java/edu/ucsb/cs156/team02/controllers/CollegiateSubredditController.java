@@ -28,6 +28,7 @@ public class CollegiateSubredditController extends ApiController {
     CollegiateSubredditRepository collegiateSubredditRepository;
 
     @ApiOperation(value = "Returns list of all subreddits in the database")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("all")
     public Iterable<CollegiateSubreddit> allCollegiateSubreddits(){
         loggingService.logMethod();
@@ -36,6 +37,7 @@ public class CollegiateSubredditController extends ApiController {
     }
 
     @ApiOperation(value = "Creates a new subreddit")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("post")
     public CollegiateSubreddit postCollegiateSubreddit(
             @ApiParam("name") @RequestParam String name,
