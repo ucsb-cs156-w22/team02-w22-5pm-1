@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -101,8 +102,6 @@ public class CollegiateSubredditController extends ApiController {
             @ApiParam("subreddit") @RequestParam String subreddit){
         
         loggingService.logMethod();
-        CurrentUser currentUser = getCurrentUser();
-        log.info("currentUser={}", currentUser);
 
         CollegiateSubreddit collegiateSubreddit = new CollegiateSubreddit();
         collegiateSubreddit.setName(name);
@@ -113,4 +112,23 @@ public class CollegiateSubredditController extends ApiController {
         return savedCollegiateSubreddit;
     }
 
+    @ApiOperation(value = "Delete a subreddit")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @DeleteMapping("")
+    public ResponseEntity<String> deleteSubreddit(
+            @ApiParam("id") @RequestParam long id){
+        
+        loggingService.logMethod();
+
+        ResponseEntity<String> error;
+        Optional<CollegiateSubreddit> optionalCsr = collegiateSubredditRepository.findById(id);
+        if(optionalCsr.isEmpty()){
+            error = ResponseEntity.badRequest().body(String.format("record %d not found", id));
+            return error;
+        }
+        else{
+            collegiateSubredditRepository.deleteById(id);
+            return ResponseEntity.ok().body(String.format("record %d deleted", id));
+        }
+    }
 }
