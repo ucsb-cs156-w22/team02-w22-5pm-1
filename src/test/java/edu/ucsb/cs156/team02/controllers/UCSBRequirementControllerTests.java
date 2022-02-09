@@ -241,4 +241,234 @@ public class UCSBRequirementControllerTests extends ControllerTestCase{
     }
 
 
+    /**************DELETE TESTS 
+     * 
+     * 
+    */
+    @WithMockUser(roles = { "USER", "ADMIN" })
+    @Test
+    public void api_ucsb_requirements__user_logged_in__delete_ucsb_requirement() throws Exception {
+
+        UCSBRequirement ucsbRequirement = UCSBRequirement.builder()
+        .requirementCode(REQ_CODE)
+        .requirementTranslation(REQ_TRANSLATION)
+        .collegeCode(COLLEGE_CODE)
+        .objCode(OBJ_CODE)
+        .courseCount(COURSE_COUNT)
+        .units(UNITS)
+        .inactive(INACTIVE)
+        .id(15L)
+        .build();
+        when(ucsbRequirementRepository.findById(eq(15L))).thenReturn(Optional.of(ucsbRequirement));
+
+        //act
+        MvcResult response = mockMvc.perform(
+                delete("/api/UCSBRequirements?id=15")
+                        .with(csrf()))
+                .andExpect(status().isOk()).andReturn();
+
+        // // assert
+        verify(ucsbRequirementRepository, times(1)).findById(15L);
+        verify(ucsbRequirementRepository, times(1)).deleteById(15L);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals("UCSB Requirement with id 15 deleted", responseString);
+    }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void api_ucsb_requirements__user_logged_in__cannot_delete_ucsb_requirement_that_does_not_exist() throws Exception {
+
+        UCSBRequirement ucsbRequirement = UCSBRequirement.builder()
+        .requirementCode(REQ_CODE)
+        .requirementTranslation(REQ_TRANSLATION)
+        .collegeCode(COLLEGE_CODE)
+        .objCode(OBJ_CODE)
+        .courseCount(COURSE_COUNT)
+        .units(UNITS)
+        .inactive(INACTIVE)
+        .id(15L)
+        .build();
+        
+        when(ucsbRequirementRepository.findById(eq(15L))).thenReturn(Optional.empty());
+
+        // act
+        MvcResult response = mockMvc.perform(
+                delete("/api/UCSBRequirements?id=15")
+                .with(csrf()))
+                .andExpect(status().is(400))
+                .andReturn();
+
+        // assert
+        // verify(ucsbRequirementRepository, times(1)).findById(15L);
+        // verify(ucsbRequirementRepository, times(1)).deleteById(15L);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals("id 15 not found", responseString);
+    }
+
+    @WithMockUser(roles = { "ADMIN" })
+    @Test
+    public void api_ucsb_requirements__admin_logged_in__delete_ucsb_requirement() throws Exception {
+
+        UCSBRequirement ucsbRequirement = UCSBRequirement.builder()
+        .requirementCode(REQ_CODE)
+        .requirementTranslation(REQ_TRANSLATION)
+        .collegeCode(COLLEGE_CODE)
+        .objCode(OBJ_CODE)
+        .courseCount(COURSE_COUNT)
+        .units(UNITS)
+        .inactive(INACTIVE)
+        .id(15L)
+        .build();
+        when(ucsbRequirementRepository.findById(eq(15L))).thenReturn(Optional.of(ucsbRequirement));
+
+        // act
+        MvcResult response = mockMvc.perform(
+                delete("/api/UCSBRequirements?id=15")
+                        .with(csrf()))
+                .andExpect(status().isOk()).andReturn();
+
+        // assert
+        verify(ucsbRequirementRepository, times(1)).findById(15L);
+        verify(ucsbRequirementRepository, times(1)).deleteById(15L);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals("UCSB Requirement with id 15 deleted", responseString);
+    }
+
+    @WithMockUser(roles = { "ADMIN" })
+    @Test
+    public void api_ucsb_requirements__admin_logged_in__cannot_delete_ucsb_requirement_that_does_not_exist() throws Exception {
+
+        UCSBRequirement ucsbRequirement = UCSBRequirement.builder()
+        .requirementCode(REQ_CODE)
+        .requirementTranslation(REQ_TRANSLATION)
+        .collegeCode(COLLEGE_CODE)
+        .objCode(OBJ_CODE)
+        .courseCount(COURSE_COUNT)
+        .units(UNITS)
+        .inactive(INACTIVE)
+        .id(15L)
+        .build();
+        when(ucsbRequirementRepository.findById(eq(15L))).thenReturn(Optional.empty());
+
+        // act
+        MvcResult response = mockMvc.perform(
+                delete("/api/UCSBRequirements?id=15")
+                        .with(csrf()))
+                        .andExpect(status().is(400))
+                        .andReturn();
+
+        // assert
+        // verify(ucsbRequirementRepository, times(1)).findById(15L);
+        // verify(ucsbRequirementRepository, times(1)).deleteById(15L);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals("id 15 not found", responseString);
+    }
+
+    /*****
+     * 
+     * PUT TESTS
+     * 
+     */
+
+    @WithMockUser(roles = { "ADMIN", "USER" })
+    @Test
+    public void api_ucsb_requirements__user_logged_in__put_ucsb_requirement() throws Exception {
+        // arrange
+
+        UCSBRequirement ucsbRequirement = UCSBRequirement.builder()
+        .requirementCode(REQ_CODE)
+        .requirementTranslation(REQ_TRANSLATION)
+        .collegeCode(COLLEGE_CODE)
+        .objCode(OBJ_CODE)
+        .courseCount(COURSE_COUNT)
+        .units(UNITS)
+        .inactive(INACTIVE)
+        .id(67L)
+        .build();
+        when(ucsbRequirementRepository.findById(eq(67L))).thenReturn(Optional.empty());
+        // We deliberately set the user information to another user
+        // This shoudl get ignored and overwritten with currrent user when todo is saved
+
+        UCSBRequirement updatedUcsbRequirement = UCSBRequirement.builder()
+        .requirementCode(REQ_CODE)
+        .requirementTranslation(REQ_TRANSLATION)
+        .collegeCode(COLLEGE_CODE)
+        .objCode(OBJ_CODE)
+        .courseCount(6)
+        .units(UNITS)
+        .inactive(INACTIVE)
+        .id(67L)
+        .build();
+        when(ucsbRequirementRepository.findById(eq(67L))).thenReturn(Optional.empty());
+        
+        UCSBRequirement correctUcsbRequirement = UCSBRequirement.builder()
+        .requirementCode(REQ_CODE)
+        .requirementTranslation(REQ_TRANSLATION)
+        .collegeCode(COLLEGE_CODE)
+        .objCode(OBJ_CODE)
+        .courseCount(6)
+        .units(UNITS)
+        .inactive(INACTIVE)
+        .id(67L)
+        .build();
+        when(ucsbRequirementRepository.findById(eq(67L))).thenReturn(Optional.empty());
+
+        String requestBody = mapper.writeValueAsString(updatedUcsbRequirement);
+        String expectedReturn = mapper.writeValueAsString(correctUcsbRequirement);
+
+        when(ucsbRequirementRepository.findById(eq(67L))).thenReturn(Optional.of(ucsbRequirement));
+
+        // act
+        MvcResult response = mockMvc.perform(
+                put("/api/UCSBRequirements?id=67")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("utf-8")
+                        .content(requestBody)
+                        .with(csrf()))
+                .andExpect(status().isOk()).andReturn();
+
+        // assert
+        verify(ucsbRequirementRepository, times(1)).findById(67L);
+        verify(ucsbRequirementRepository, times(1)).save(correctUcsbRequirement); // should be saved with correct user
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedReturn, responseString);
+    }
+
+    @WithMockUser(roles = {"ADMIN", "USER" })
+    @Test
+    public void api_ucsb_requirements__user_logged_in__cannot_put_ucsb_requirement_that_does_not_exist() throws Exception {
+        // arrange
+
+        UCSBRequirement updatedUcsbRequirement = UCSBRequirement.builder()
+        .requirementCode(REQ_CODE)
+        .requirementTranslation(REQ_TRANSLATION)
+        .collegeCode(COLLEGE_CODE)
+        .objCode(OBJ_CODE)
+        .courseCount(COURSE_COUNT)
+        .units(UNITS)
+        .inactive(INACTIVE)
+        .id(67L)
+        .build();
+        when(ucsbRequirementRepository.findById(eq(67L))).thenReturn(Optional.empty());
+        
+        String requestBody = mapper.writeValueAsString(updatedUcsbRequirement);
+
+        when(ucsbRequirementRepository.findById(eq(67L))).thenReturn(Optional.empty());
+
+        // act
+        MvcResult response = mockMvc.perform(
+                put("/api/UCSBRequirements?id=67")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("utf-8")
+                        .content(requestBody)
+                        .with(csrf()))
+                .andExpect(status().isBadRequest()).andReturn();
+
+        // assert
+        verify(ucsbRequirementRepository, times(1)).findById(67L);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals("id 67 not found", responseString);
+    }
 }
+
+
