@@ -19,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,6 +55,38 @@ public class CollegiateSubredditControllerTests extends ControllerTestCase {
         String expectedJson = mapper.writeValueAsString(expectedSubreddits);
         String responseString = response.getResponse().getContentAsString();
         assertEquals(expectedJson, responseString);
+    }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void getSubredditById() throws Exception {
+        long ID = 1L;
+        CollegiateSubreddit expectedCsr = CollegiateSubreddit.builder().name("SawCon").location("Su Ghana").subreddit("SawConvention").id(ID).build();
+
+        when(collegiateSubredditRepository.findById(ID)).thenReturn(Optional.of(expectedCsr));
+
+        MvcResult response = mockMvc.perform(get("/api/collegiateSubreddits/?id=" + ID))
+            .andExpect(status().isOk()).andReturn();
+
+        verify(collegiateSubredditRepository, times(1)).findById(ID);
+        String expectedJson = mapper.writeValueAsString(expectedCsr);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedJson, responseString);
+    }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void getSubredditByIdBadRequest() throws Exception {
+        long ID = 1L;
+
+        when(collegiateSubredditRepository.findById(eq(ID))).thenReturn(Optional.empty());
+
+        MvcResult response = mockMvc.perform(get("/api/collegiateSubreddits/?id=" + ID))
+            .andExpect(status().isBadRequest()).andReturn();
+
+        verify(collegiateSubredditRepository, times(1)).findById(eq(ID));
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals("subreddit with id 1 not found", responseString);
     }
 
     @WithMockUser(roles = { "USER" })

@@ -2,15 +2,19 @@ package edu.ucsb.cs156.team02.controllers;
 
 import edu.ucsb.cs156.team02.entities.CollegiateSubreddit;
 import edu.ucsb.cs156.team02.models.CurrentUser;
-import edu.ucsb.cs156.team02.models.SystemInfo;
 import edu.ucsb.cs156.team02.repositories.CollegiateSubredditRepository;
-import edu.ucsb.cs156.team02.services.SystemInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Optional;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +31,9 @@ public class CollegiateSubredditController extends ApiController {
     @Autowired
     CollegiateSubredditRepository collegiateSubredditRepository;
 
+    @Autowired
+    ObjectMapper mapper;
+
     @ApiOperation(value = "Returns list of all subreddits in the database")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/all")
@@ -34,6 +41,26 @@ public class CollegiateSubredditController extends ApiController {
         loggingService.logMethod();
         Iterable<CollegiateSubreddit> subreddits = collegiateSubredditRepository.findAll();
         return subreddits;
+    }
+
+    @ApiOperation(value = "Returns info about the subreddit with ID passed as a parameter")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("")
+    public ResponseEntity<String> subredditByID(
+            @ApiParam("id") @RequestParam long id) throws JsonProcessingException{
+            
+        CollegiateSubreddit csr;
+        ResponseEntity<String> error;
+        Optional<CollegiateSubreddit> optionalCsr = collegiateSubredditRepository.findById(id);
+        if(optionalCsr.isEmpty()){
+            error = ResponseEntity.badRequest().body(String.format("subreddit with id %d not found", id));
+            return error;
+        }
+        else{
+            csr = optionalCsr.get();
+            String body = mapper.writeValueAsString(csr);
+            return ResponseEntity.ok().body(body);
+        }
     }
 
     @ApiOperation(value = "Creates a new subreddit")
