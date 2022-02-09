@@ -86,6 +86,30 @@ public class UCSBRequirementControllerTests extends ControllerTestCase{
         assertEquals(expectedJson, responseString);
     }
 
+    @Test
+    public void api_ucsbrequirements_post_not_logged_in() throws Exception {
+        
+        // arrange
+        UCSBRequirement expectedUcsbRequirement = UCSBRequirement.builder()
+            .requirementCode(REQ_CODE)
+            .requirementTranslation(REQ_TRANSLATION)
+            .collegeCode(COLLEGE_CODE)
+            .objCode(OBJ_CODE)
+            .courseCount(COURSE_COUNT)
+            .units(UNITS)
+            .inactive(INACTIVE)
+            .id(ID)
+            .build();
+
+        String post_url = String.format("/api/UCSBRequirements/post?requirementCode=%s&requirementTranslation=%s&collegeCode=%s&objCode=%s&courseCount=%d&units=%d&inactive=%s", REQ_CODE, REQ_TRANSLATION, COLLEGE_CODE, OBJ_CODE, COURSE_COUNT, UNITS, INACTIVE.toString());
+
+        // act
+        MvcResult response = mockMvc.perform(
+                post(post_url)
+                        .with(csrf()))
+                .andExpect(status().is(403)).andReturn();
+    }
+
     @WithMockUser(roles = { "USER" })
     @Test
     public void api_all_ucsb_requirements_get_as_user() throws Exception {
@@ -138,6 +162,25 @@ public class UCSBRequirementControllerTests extends ControllerTestCase{
         String expectedJson = mapper.writeValueAsString(List.of(expectedUcsbRequirement));
         String responseString = response.getResponse().getContentAsString();
         assertEquals(expectedJson, responseString);
+    }
+
+    @Test
+    public void api_all_ucsb_requirements_get_as_not_logged_in() throws Exception {
+
+         UCSBRequirement expectedUcsbRequirement = UCSBRequirement.builder()
+            .requirementCode(REQ_CODE)
+            .requirementTranslation(REQ_TRANSLATION)
+            .collegeCode(COLLEGE_CODE)
+            .objCode(OBJ_CODE)
+            .courseCount(COURSE_COUNT)
+            .units(UNITS)
+            .inactive(INACTIVE)
+            .id(ID)
+            .build();
+
+        MvcResult response = mockMvc.perform(get("/api/UCSBRequirements/all"))
+                .andExpect(status().is(403))
+                .andReturn();
     }
 
     @WithMockUser(roles = { "ADMIN" })
