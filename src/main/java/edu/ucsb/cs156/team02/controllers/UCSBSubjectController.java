@@ -70,6 +70,7 @@ public class UCSBSubjectController extends ApiController {
         return savedSubject;
     }
 
+
     @ApiOperation(value = "Get a single UCSB Subject by ID if it is in the databse.")
     @PreAuthorize("hasRole('ROLE_USER') || hasRole('ROLE_ADMIN')")
     @GetMapping("")
@@ -91,5 +92,46 @@ public class UCSBSubjectController extends ApiController {
 
         String body = mapper.writeValueAsString(subject);
         return ResponseEntity.ok().body(body);
+    }
+
+    @ApiOperation(value = "Update a single UCSB Subject")
+    @PreAuthorize("hasRole('ROLE_USER') || hasRole('ROLE_ADMIN')")
+    @PutMapping("")
+    public ResponseEntity<String> putSubjectById(
+            @ApiParam("id") @RequestParam Long id,
+            @RequestBody @Valid UCSBSubject incomingSubject) throws JsonProcessingException {
+        loggingService.logMethod();
+        Optional<UCSBSubject> optionalSubject = subjectRepository.findById(id);
+
+        if (optionalSubject.isEmpty()) {
+            return ResponseEntity
+            .badRequest()
+            .body(String.format("Subject with id %d not found", id)); 
+        }
+        else{
+            // incomingSubject.setId(id);
+            subjectRepository.save(incomingSubject);    
+            String body = mapper.writeValueAsString(incomingSubject);
+            return ResponseEntity.ok().body(body);
+        }
+    }
+
+    @ApiOperation(value = "Delete a UCSB Subject")
+    @PreAuthorize("hasRole('ROLE_USER') || hasRole('ROLE_ADMIN')")
+    @DeleteMapping("")
+    public ResponseEntity<String> deleteSubject(
+            @ApiParam("id") @RequestParam Long id) {
+        loggingService.logMethod();
+        Optional<UCSBSubject> optionalSubject = subjectRepository.findById(id);
+
+        if (optionalSubject.isEmpty()) {
+            return ResponseEntity
+            .badRequest()
+            .body(String.format("Subject with id %d not found", id)); 
+        }
+        else{
+            subjectRepository.deleteById(id);
+            return ResponseEntity.ok().body(String.format("Subject with id %d deleted", id));
+        }
     }
 }
