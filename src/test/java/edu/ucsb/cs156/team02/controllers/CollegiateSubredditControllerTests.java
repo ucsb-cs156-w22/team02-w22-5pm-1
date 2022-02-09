@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+
 import edu.ucsb.cs156.team02.ControllerTestCase;
 import edu.ucsb.cs156.team02.entities.CollegiateSubreddit;
 import edu.ucsb.cs156.team02.entities.User;
@@ -116,6 +118,52 @@ public class CollegiateSubredditControllerTests extends ControllerTestCase {
 
     @WithMockUser(roles = { "USER" })
     @Test
+    public void putSubreddit() throws Exception {
+        long ID = 0L;
+        CollegiateSubreddit oldPost = CollegiateSubreddit.builder()
+            .name("OldTestName")
+            .location("OldTestLoc")
+            .subreddit("OldTestSub")
+            .id(ID)
+            .build();
+
+        CollegiateSubreddit newPost = CollegiateSubreddit.builder()
+            .name("TestName")
+            .location("TestLoc")
+            .subreddit("TestSub")
+            .id(ID)
+            .build();
+        
+        CollegiateSubreddit correctPost = CollegiateSubreddit.builder()
+            .name("TestName")
+            .location("TestLoc")
+            .subreddit("TestSub")
+            .id(ID)
+            .build();
+
+        String requestBody = mapper.writeValueAsString(newPost);
+        String expectedReturn = mapper.writeValueAsString(correctPost);
+
+        when(collegiateSubredditRepository.findById(eq(ID))).thenReturn(Optional.of(oldPost));
+
+        MvcResult response = mockMvc.perform(
+            put("/api/collegiateSubreddits/?id=" + ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("utf-8")
+                .content(requestBody)
+                .with(csrf()))
+            .andExpect(status().isOk()).andReturn();
+        
+        // assert
+        // verify(collegiateSubredditRepository, times(1)).findById(ID);
+        // verify(collegiateSubredditRepository, times(1)).save(correctPost);
+
+        // String responseString = response.getResponse().getContentAsString();
+        // assertEquals(expectedReturn, responseString);
+    }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
     public void deleteSubreddit() throws Exception {
         long ID = 1L;
         CollegiateSubreddit csr = CollegiateSubreddit.builder().name("Emma Chizit").location("Outback").subreddit("AustralianMemez").id(ID).build();
@@ -135,9 +183,37 @@ public class CollegiateSubredditControllerTests extends ControllerTestCase {
 
     @WithMockUser(roles = { "USER" })
     @Test
+    public void putSubredditDoesntExist() throws Exception {
+        // arrange
+        CollegiateSubreddit correctPost = CollegiateSubreddit.builder()
+            .name("TestName")
+            .location("TestLoc")
+            .subreddit("TestSub")
+            .id(0L)
+            .build();
+
+        String requestBody = mapper.writeValueAsString(correctPost);
+
+        when(collegiateSubredditRepository.findById(eq(0L))).thenReturn(Optional.empty());
+
+        MvcResult response = mockMvc.perform(
+                put("/api/collegiateSubreddits/?id=0")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("utf-8")
+                        .content(requestBody)
+                        .with(csrf()))
+                .andExpect(status().isBadRequest()).andReturn();
+
+        verify(collegiateSubredditRepository, times(1)).findById(0L);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals("Subreddit with id " + 0L + " not found", responseString);
+    }
+
+
+    @WithMockUser(roles = { "USER" })
+    @Test
     public void deleteSubredditBadRequest() throws Exception {
         long ID = 1L;
-
         when(collegiateSubredditRepository.findById(eq(ID))).thenReturn(Optional.empty());
 
         MvcResult response = mockMvc.perform(
