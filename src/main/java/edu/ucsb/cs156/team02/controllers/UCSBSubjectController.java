@@ -39,7 +39,7 @@ public class UCSBSubjectController extends ApiController {
 
     @ApiOperation(value = "List all UCSB Subjects")
     @GetMapping("/all")
-    public Iterable<UCSBSubject> allUsersTodos() {
+    public Iterable<UCSBSubject> allSubjects() {
         loggingService.logMethod();
         Iterable<UCSBSubject> subjects = subjectRepository.findAll();
         return subjects;
