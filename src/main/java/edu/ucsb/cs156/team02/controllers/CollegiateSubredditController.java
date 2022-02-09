@@ -71,49 +71,21 @@ public class CollegiateSubredditController extends ApiController {
     @ApiOperation(value = "Update a subreddit")
     @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping("")
-    public ResponseEntity<String> putCollegiateSubreddit(
+    public ResponseEntity<String> putCollegiateSubredditById(
             @ApiParam("id") @RequestParam Long id,
             @RequestBody @Valid CollegiateSubreddit incomingCsr) throws JsonProcessingException {
 
         loggingService.logMethod();
-        CollegiateSubreddit csr;
-        ResponseEntity<String> error;
+
         Optional<CollegiateSubreddit> optionalCsr = collegiateSubredditRepository.findById(id);
         if(optionalCsr.isEmpty()){
-            error = ResponseEntity.badRequest().body(String.format("subreddit with id %d not found", id));
-            return error;
+            return ResponseEntity.badRequest().body(String.format("Subreddit with id %d not found", id));
         }
         else{
-            csr = optionalCsr.get();
-            String body = mapper.writeValueAsString(csr);
+            collegiateSubredditRepository.save(incomingCsr);
+            String body = mapper.writeValueAsString(incomingCsr);
             return ResponseEntity.ok().body(body);
         }
-        
-            //     public ResponseEntity<String> putTodoById(
-            //         @ApiParam("id") @RequestParam Long id,
-            //         @RequestBody @Valid Todo incomingTodo) throws JsonProcessingException {
-            //     loggingService.logMethod();
-        
-            //     CurrentUser currentUser = getCurrentUser();
-            //     User user = currentUser.getUser();
-        
-            //     TodoOrError toe = new TodoOrError(id);
-        
-            //     toe = doesTodoExist(toe);
-            //     if (toe.error != null) {
-            //         return toe.error;
-            //     }
-            //     toe = doesTodoBelongToCurrentUser(toe);
-            //     if (toe.error != null) {
-            //         return toe.error;
-            //     }
-        
-            //     incomingTodo.setUser(user);
-            //     todoRepository.save(incomingTodo);
-        
-            //     String body = mapper.writeValueAsString(incomingTodo);
-            //     return ResponseEntity.ok().body(body);
-            // }
     }
 
 
