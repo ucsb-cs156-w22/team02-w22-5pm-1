@@ -16,6 +16,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,7 +40,20 @@ public class CollegiateSubredditControllerTests extends ControllerTestCase {
     @WithMockUser(roles = { "USER" })
     @Test
     public void getAllSubreddits() throws Exception {
-        mockMvc.perform(get("/api/collegiateSubreddits/all")).andExpect(status().isOk());
+        CollegiateSubreddit csr = CollegiateSubreddit.builder().name("TestName").location("TestLoc").subreddit("TestSub").id(1L).build();
+
+        ArrayList<CollegiateSubreddit> expectedSubreddits = new ArrayList<>();
+        expectedSubreddits.add(csr);
+
+        when(collegiateSubredditRepository.findAll()).thenReturn(expectedSubreddits);
+
+        MvcResult response = mockMvc.perform(get("/api/collegiateSubreddits/all")).andExpect(status().isOk()).andReturn();
+
+
+        verify(collegiateSubredditRepository, times(1)).findAll();
+        String expectedJson = mapper.writeValueAsString(expectedSubreddits);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedJson, responseString);
     }
 
     @WithMockUser(roles = { "USER" })
