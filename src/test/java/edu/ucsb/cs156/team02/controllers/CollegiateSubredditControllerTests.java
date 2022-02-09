@@ -113,4 +113,40 @@ public class CollegiateSubredditControllerTests extends ControllerTestCase {
         assertEquals(expectedJson, responseString);
 
     }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void deleteSubreddit() throws Exception {
+        long ID = 1L;
+        CollegiateSubreddit csr = CollegiateSubreddit.builder().name("Emma Chizit").location("Outback").subreddit("AustralianMemez").id(ID).build();
+
+        when(collegiateSubredditRepository.findById(eq(ID))).thenReturn(Optional.of(csr));
+
+        MvcResult response = mockMvc.perform(
+            delete("/api/collegiateSubreddits/?id=" + ID)
+                .with(csrf()))
+            .andExpect(status().isOk()).andReturn();
+
+        verify(collegiateSubredditRepository, times(1)).findById(ID);
+        verify(collegiateSubredditRepository, times(1)).deleteById(ID);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals("record " + ID + " deleted", responseString);
+    }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void deleteSubredditBadRequest() throws Exception {
+        long ID = 1L;
+
+        when(collegiateSubredditRepository.findById(eq(ID))).thenReturn(Optional.empty());
+
+        MvcResult response = mockMvc.perform(
+            delete("/api/collegiateSubreddits/?id=" + ID)
+                .with(csrf()))
+            .andExpect(status().isBadRequest()).andReturn();
+
+        verify(collegiateSubredditRepository, times(1)).findById(ID);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals("record " + ID + " not found", responseString);
+    }
 }
