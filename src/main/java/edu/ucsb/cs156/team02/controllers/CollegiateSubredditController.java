@@ -6,9 +6,12 @@ import edu.ucsb.cs156.team02.repositories.CollegiateSubredditRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
+
+import javax.validation.Valid;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,6 +53,7 @@ public class CollegiateSubredditController extends ApiController {
     public ResponseEntity<String> subredditByID(
             @ApiParam("id") @RequestParam long id) throws JsonProcessingException{
             
+        loggingService.logMethod();
         CollegiateSubreddit csr;
         ResponseEntity<String> error;
         Optional<CollegiateSubreddit> optionalCsr = collegiateSubredditRepository.findById(id);
@@ -62,6 +67,56 @@ public class CollegiateSubredditController extends ApiController {
             return ResponseEntity.ok().body(body);
         }
     }
+
+    @ApiOperation(value = "Update a subreddit")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PutMapping("")
+    public ResponseEntity<String> putCollegiateSubreddit(
+            @ApiParam("id") @RequestParam Long id,
+            @RequestBody @Valid CollegiateSubreddit incomingCsr) throws JsonProcessingException {
+
+        loggingService.logMethod();
+        CollegiateSubreddit csr;
+        ResponseEntity<String> error;
+        Optional<CollegiateSubreddit> optionalCsr = collegiateSubredditRepository.findById(id);
+        if(optionalCsr.isEmpty()){
+            error = ResponseEntity.badRequest().body(String.format("subreddit with id %d not found", id));
+            return error;
+        }
+        else{
+            csr = optionalCsr.get();
+            String body = mapper.writeValueAsString(csr);
+            return ResponseEntity.ok().body(body);
+        }
+        
+            //     public ResponseEntity<String> putTodoById(
+            //         @ApiParam("id") @RequestParam Long id,
+            //         @RequestBody @Valid Todo incomingTodo) throws JsonProcessingException {
+            //     loggingService.logMethod();
+        
+            //     CurrentUser currentUser = getCurrentUser();
+            //     User user = currentUser.getUser();
+        
+            //     TodoOrError toe = new TodoOrError(id);
+        
+            //     toe = doesTodoExist(toe);
+            //     if (toe.error != null) {
+            //         return toe.error;
+            //     }
+            //     toe = doesTodoBelongToCurrentUser(toe);
+            //     if (toe.error != null) {
+            //         return toe.error;
+            //     }
+        
+            //     incomingTodo.setUser(user);
+            //     todoRepository.save(incomingTodo);
+        
+            //     String body = mapper.writeValueAsString(incomingTodo);
+            //     return ResponseEntity.ok().body(body);
+            // }
+    }
+
+
 
     @ApiOperation(value = "Creates a new subreddit")
     @PreAuthorize("hasRole('ROLE_USER')")
