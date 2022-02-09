@@ -99,5 +99,51 @@ public class UCSBRequirementController extends ApiController{
         return savedUcsbRequirement;
     }
 
+    @ApiOperation(value = "Delete a UCSB requirement")
+    @PreAuthorize("hasRole('ROLE_USER')  || hasRole('ROLE_ADMIN')")
+    @DeleteMapping("")
+    public ResponseEntity<String> deleteUcsbRequirement(
+            @ApiParam("id") @RequestParam Long id) {
+        loggingService.logMethod();
+
+
+        Optional<UCSBRequirement> optionalRequirement = ucsbRequirementRepository.findById(id);
+
+        if (optionalRequirement.isEmpty()) {
+            ResponseEntity<String> error;
+            error = ResponseEntity
+                    .badRequest()
+                    .body(String.format("id %d not found", id));
+            return error;
+        }
+
+        ucsbRequirementRepository.deleteById(id);
+
+        return ResponseEntity.ok().body(String.format("UCSB Requirement with id %d deleted", id));
+    }
+
+    @ApiOperation(value = "Update a single UCSB requirement")
+    @PreAuthorize("hasRole('ROLE_ADMIN')  || hasRole('ROLE_ADMIN')")
+    @PutMapping("")
+    public ResponseEntity<String> putUcsbRequirementById(
+            @ApiParam("id") @RequestParam Long id,
+            @RequestBody @Valid UCSBRequirement incomingUcsbRequirement) throws JsonProcessingException {
+        loggingService.logMethod();
+
+        Optional<UCSBRequirement> optionalRequirement = ucsbRequirementRepository.findById(id);
+
+        if (optionalRequirement.isEmpty()) {
+            ResponseEntity<String> error;
+            error = ResponseEntity
+                    .badRequest()
+                    .body(String.format("id %d not found", id));
+            return error;
+        }
+
+        ucsbRequirementRepository.save(incomingUcsbRequirement);
+
+        String body = mapper.writeValueAsString(incomingUcsbRequirement);
+        return ResponseEntity.ok().body(body);
+    }
 
 }
