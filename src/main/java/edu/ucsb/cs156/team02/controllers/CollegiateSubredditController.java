@@ -79,7 +79,9 @@ public class CollegiateSubredditController extends ApiController {
 
         Optional<CollegiateSubreddit> optionalCsr = collegiateSubredditRepository.findById(id);
         if(optionalCsr.isEmpty()){
-            return ResponseEntity.badRequest().body(String.format("Subreddit with id %d not found", id));
+            return ResponseEntity
+                .badRequest()
+                .body(String.format("Subreddit with id %d not found", id));
         }
         else{
             collegiateSubredditRepository.save(incomingCsr);
