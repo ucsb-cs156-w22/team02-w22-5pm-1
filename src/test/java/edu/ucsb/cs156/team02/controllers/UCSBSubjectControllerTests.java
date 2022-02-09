@@ -45,7 +45,7 @@ public class UCSBSubjectControllerTests extends ControllerTestCase {
 
     //get all tests
     @Test
-    public void ucsb_subject_get_logged_out() throws Exception {
+    public void api_ucsb_subject_all__logged_out__returns_403() throws Exception {
         mockMvc.perform(get("/api/UCSBSubjects/all"))
                 .andExpect(status().is(403));
     }
@@ -53,7 +53,7 @@ public class UCSBSubjectControllerTests extends ControllerTestCase {
 
     @WithMockUser(roles = { "USER" })
     @Test
-    public void ucsb_subject_get_user() throws Exception {
+    public void api_ucsb_subject_all__user_logged_in__returns_200() throws Exception {
         mockMvc.perform(get("/api/UCSBSubjects/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists());
@@ -62,7 +62,7 @@ public class UCSBSubjectControllerTests extends ControllerTestCase {
 
     @WithMockUser(roles = { "ADMIN" })
     @Test
-    public void ucsb_subject_get_admin() throws Exception {
+    public void api_ucsb_subject_all__admin_logged_in_returns_200() throws Exception {
         mockMvc.perform(get("/api/UCSBSubjects/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists());
@@ -71,7 +71,7 @@ public class UCSBSubjectControllerTests extends ControllerTestCase {
 
     //get with id tests
     @Test
-    public void ucsb_subject_get_subject_with_id_not_logged_in() throws Exception {
+    public void api_ucsb_subject_get__logged_out__returns_403() throws Exception {
         mockMvc.perform(
             get("/api/UCSBSubjects/?id=420"))        
         .andExpect(status().is(403)).andReturn();
@@ -80,7 +80,7 @@ public class UCSBSubjectControllerTests extends ControllerTestCase {
     
     @WithMockUser(roles = { "USER" })
     @Test
-    public void ucsb_subject_get_subject_with_id_user() throws Exception {
+    public void api_ucsb_subject_get__user_logged_in__returns_subject_with_id() throws Exception {
         UCSBSubject expectedSubject = UCSBSubject.builder()
                 .subjectCode("69420")
                 .subjectTranslation("mikeoxlong")
@@ -106,7 +106,7 @@ public class UCSBSubjectControllerTests extends ControllerTestCase {
 
     @WithMockUser(roles = { "USER" })
     @Test
-    public void ucsb_subject_get_subject_with_id_user_does_not_exist() throws Exception {
+    public void api_ucsb_subject__user_logged_in__searches_for_subject_does_not_exist() throws Exception {
         when(subjectRepository.findById(eq(29L))).thenReturn(Optional.empty());
 
         // act
@@ -123,7 +123,7 @@ public class UCSBSubjectControllerTests extends ControllerTestCase {
 
     @WithMockUser(roles = { "ADMIN" })
     @Test
-    public void ucsb_subject_get_subject_with_id_admin() throws Exception {
+    public void api_ucsb_subject_get__admin_logged_in__returns_subject_with_id() throws Exception {
         UCSBSubject expectedSubject = UCSBSubject.builder()
                 .subjectCode("69420")
                 .subjectTranslation("mikeoxlong")
@@ -149,7 +149,7 @@ public class UCSBSubjectControllerTests extends ControllerTestCase {
 
     @WithMockUser(roles = { "ADMIN" })
     @Test
-    public void ucsb_subject_get_subject_with_id_admin_does_not_exist() throws Exception {
+    public void api_ucsb_subject__admin_logged_in__searches_for_subject_does_not_exist() throws Exception {
         when(subjectRepository.findById(eq(420L))).thenReturn(Optional.empty());
 
         // act
@@ -166,7 +166,7 @@ public class UCSBSubjectControllerTests extends ControllerTestCase {
 
     //post tests
     @Test
-    public void ucsb_subject_post_logged_out() throws Exception {
+    public void api_ucsb_subject_post__logged_out__returns_403() throws Exception {
         mockMvc.perform(
             post("/api/UCSBSubjects/post?relatedDeptCode=bruh&subjectCode=69420&subjectTranslation=mikeoxlong&deptCode=69&collegeCode=420&inactive=true")
             .with(csrf()))        
@@ -176,7 +176,7 @@ public class UCSBSubjectControllerTests extends ControllerTestCase {
 
     @WithMockUser(roles = { "USER" })
     @Test
-    public void ucsb_subject_post_user() throws Exception {
+    public void api_ucsb_subject_post__user_logged_in() throws Exception {
         UCSBSubject expectedSubject = UCSBSubject.builder()
                 .subjectCode("69420")
                 .subjectTranslation("mikeoxlong")
@@ -202,7 +202,7 @@ public class UCSBSubjectControllerTests extends ControllerTestCase {
 
     @WithMockUser(roles = { "ADMIN" })
     @Test
-    public void ucsb_subject_post_admin() throws Exception {
+    public void api_ucsb_subject_post__admin_logged_in() throws Exception {
         UCSBSubject expectedSubject = UCSBSubject.builder()
                 .subjectCode("69420")
                 .subjectTranslation("mikeoxlong")
@@ -225,4 +225,21 @@ public class UCSBSubjectControllerTests extends ControllerTestCase {
         assertEquals(expectedJson, responseString);
     }
   
+
+    @Test
+    public void api_ucsb_subject__put_logged_out() throws Exception{
+
+    }
+
+
+    @Test
+    public void api_ucsb_subject__put_user() throws Exception{
+
+    }
+
+
+    @Test
+    public void api_ucsb_subject__put_admin() throws Exception{
+
+    }
 }

@@ -70,6 +70,7 @@ public class UCSBSubjectController extends ApiController {
         return savedSubject;
     }
 
+
     @ApiOperation(value = "Get a single UCSB Subject by ID if it is in the databse.")
     @PreAuthorize("hasRole('ROLE_USER') || hasRole('ROLE_ADMIN')")
     @GetMapping("")
@@ -93,10 +94,11 @@ public class UCSBSubjectController extends ApiController {
         return ResponseEntity.ok().body(body);
     }
 
-    @ApiOperation(value = "Update a single todo (if it belongs to current user)")
+
+    @ApiOperation(value = "Update a single subject")
     @PreAuthorize("hasRole('ROLE_USER') || hasRole('ROLE_ADMIN')")
     @PutMapping("")
-    public ResponseEntity<String> putTodoById(
+    public ResponseEntity<String> putSubjectById(
             @ApiParam("id") @RequestParam Long id,
             @RequestBody @Valid UCSBSubject incomingSubject) throws JsonProcessingException {
         loggingService.logMethod();
