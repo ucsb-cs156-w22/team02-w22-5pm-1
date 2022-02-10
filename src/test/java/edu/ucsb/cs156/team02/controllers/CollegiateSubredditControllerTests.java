@@ -119,7 +119,7 @@ public class CollegiateSubredditControllerTests extends ControllerTestCase {
     @WithMockUser(roles = { "USER" })
     @Test
     public void putSubreddit() throws Exception {
-        long ID = 0L;
+        long ID = 1L;
         CollegiateSubreddit oldPost = CollegiateSubreddit.builder()
             .name("OldTestName")
             .location("OldTestLoc")
@@ -155,11 +155,11 @@ public class CollegiateSubredditControllerTests extends ControllerTestCase {
             .andExpect(status().isOk()).andReturn();
         
         // assert
-        // verify(collegiateSubredditRepository, times(1)).findById(ID);
-        // verify(collegiateSubredditRepository, times(1)).save(correctPost);
+        verify(collegiateSubredditRepository, times(1)).findById(ID);
+        verify(collegiateSubredditRepository, times(1)).save(correctPost);
 
-        // String responseString = response.getResponse().getContentAsString();
-        // assertEquals(expectedReturn, responseString);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedReturn, responseString);
     }
 
     @WithMockUser(roles = { "USER" })
