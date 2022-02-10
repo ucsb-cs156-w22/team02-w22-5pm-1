@@ -85,6 +85,7 @@ public class CollegiateSubredditController extends ApiController {
                 .body(String.format("Subreddit with id %d not found", id));
         }
         else{
+            incomingCsr.setId(id);
             collegiateSubredditRepository.save(incomingCsr);
             String body = mapper.writeValueAsString(incomingCsr);
             return ResponseEntity.ok().body(body);
