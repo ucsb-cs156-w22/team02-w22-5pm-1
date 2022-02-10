@@ -385,7 +385,6 @@ public class UCSBRequirementControllerTests extends ControllerTestCase{
         .inactive(INACTIVE)
         .id(67L)
         .build();
-        when(ucsbRequirementRepository.findById(eq(67L))).thenReturn(Optional.empty());
         // We deliberately set the user information to another user
         // This shoudl get ignored and overwritten with currrent user when todo is saved
 
@@ -399,7 +398,6 @@ public class UCSBRequirementControllerTests extends ControllerTestCase{
         .inactive(INACTIVE)
         .id(67L)
         .build();
-        when(ucsbRequirementRepository.findById(eq(67L))).thenReturn(Optional.empty());
         
         UCSBRequirement correctUcsbRequirement = UCSBRequirement.builder()
         .requirementCode(REQ_CODE)
@@ -411,7 +409,7 @@ public class UCSBRequirementControllerTests extends ControllerTestCase{
         .inactive(INACTIVE)
         .id(67L)
         .build();
-        when(ucsbRequirementRepository.findById(eq(67L))).thenReturn(Optional.empty());
+        
 
         String requestBody = mapper.writeValueAsString(updatedUcsbRequirement);
         String expectedReturn = mapper.writeValueAsString(correctUcsbRequirement);
@@ -449,7 +447,7 @@ public class UCSBRequirementControllerTests extends ControllerTestCase{
         .inactive(INACTIVE)
         .id(67L)
         .build();
-        when(ucsbRequirementRepository.findById(eq(67L))).thenReturn(Optional.empty());
+        
         
         String requestBody = mapper.writeValueAsString(updatedUcsbRequirement);
 
