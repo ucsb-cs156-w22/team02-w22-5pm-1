@@ -109,7 +109,7 @@ public class UCSBSubjectController extends ApiController {
             .body(String.format("Subject with id %d not found", id)); 
         }
         else{
-            // incomingSubject.setId(id);
+            incomingSubject.setId(id);
             subjectRepository.save(incomingSubject);    
             String body = mapper.writeValueAsString(incomingSubject);
             return ResponseEntity.ok().body(body);

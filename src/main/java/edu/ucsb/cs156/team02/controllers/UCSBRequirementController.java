@@ -140,6 +140,7 @@ public class UCSBRequirementController extends ApiController{
             return error;
         }
 
+        incomingUcsbRequirement.setId(id);
         ucsbRequirementRepository.save(incomingUcsbRequirement);
 
         String body = mapper.writeValueAsString(incomingUcsbRequirement);
